@@ -1,5 +1,5 @@
 package chess.pieces;
 
-public class Rock {
+public class Rook {
 
 }
