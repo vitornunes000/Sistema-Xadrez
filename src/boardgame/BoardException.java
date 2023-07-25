@@ -1,6 +1,6 @@
 package boardgame;
 
-public class BoardException extends Exception {
+public class BoardException extends RuntimeException {
 
 	/**
 	 * 

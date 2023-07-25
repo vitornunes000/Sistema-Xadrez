@@ -32,23 +32,20 @@ public class Board {
 		return pieces;
 	}
 
-	public Piece piece(int row, int column) throws BoardException {
+	public Piece piece(int row, int column) {
 		if(!positionExists(row, column)) {
 			throw new BoardException("Position not on the board!!!");
 		}
 		return pieces[row][column];
 	}
-	public Piece piece(Position position) throws BoardException{
+	public Piece piece(Position position){
 		if(!positionExists(position)) {
 			throw new BoardException("Position not on the board!!!");
 		}
 		return pieces[position.getRow()][position.getColumn()];
 	}
 	
-	public void placePiece(Piece piece, Position position) throws BoardException{
-		if(!positionExists(position)) {
-			throw new BoardException("Position not on the board!!!");
-		}
+	public void placePiece(Piece piece, Position position){
 		if(thereIsAPiece(position)) {
 			throw new BoardException("there is a already piece on position!!!");
 		}
@@ -57,14 +54,29 @@ public class Board {
 	}
 	//metodo que verifica se uma dada linha e coluna estao dentro dos parametros
 	private boolean positionExists(int row, int column) {
-		return row >= 0 && row < rows && column <= 0 && column < columns;
+		return row >= 0 && row < rows && column >= 0 && column < columns;
 	}
 	//metodo public que utiliza o anterior
 	public boolean positionExists(Position position) {
 		return positionExists(position.getRow(), position.getColumn());
 	}
 	
-	public boolean thereIsAPiece(Position position) throws BoardException {
+	public boolean thereIsAPiece(Position position){
+		if(!positionExists(position)) {
+			throw new BoardException("Position not on the board!!!");
+		}
 		return piece(position) != null;
+	}
+	public Piece removePiece(Position position) {
+		if(!positionExists(position)) {
+			throw new BoardException("Position not on the board!!!");
+		}
+		if(piece(position) == null) {
+			return null;
+		}
+		Piece piece = piece(position);
+		pieces[position.getRow()][position.getColumn()] = null;
+		piece.position = null;
+		return piece;
 	}
 }
