@@ -1,5 +1,7 @@
 package application;
 
+import java.util.Scanner;
+
 import chessEntities.ChessPiece;
 import chessEntities.ChessPosition;
 import chessEntities.Color;
@@ -8,8 +10,11 @@ public class Ui {
 
 	// https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
 	
-	public static ChessPosition readChessPosition() {
-		
+	public static ChessPosition readChessPosition(Scanner sc) {
+		String s = sc.nextLine();
+		char column = s.charAt(0);
+		int row = Integer.parseInt(s.substring(1));
+		return new ChessPosition(column, row);
 	}
 	
 	

@@ -1,6 +1,8 @@
 package chessEntities;
 
 import boardgame.Board;
+import boardgame.BoardException;
+import boardgame.Piece;
 import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
@@ -49,4 +51,27 @@ public class ChessMatch {
         placeNewPiece('e', 8, new Rook(board, Color.BLACK));
         placeNewPiece('d', 8, new King(board, Color.BLACK));
 	}
+	//movimenta a peça e efetua uma captura
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+		Position source = sourcePosition.toPosition();
+		Position target = targetPosition.toPosition();
+		validateSourcePosition(source);
+		Piece capturedPiece = makeMove(source, target);
+		return (ChessPiece) capturedPiece;
+		
+	}
+	// validar se a posição de origem informada é valida
+	private void validateSourcePosition(Position source) {
+		if(!board.thereIsAPiece(source)) {
+			throw new BoardException("There is no piece on source position!!");
+		}
+	}
+	//remover a peça da origem e uma possivel peça do destino
+	private Piece makeMove(Position source, Position target) {
+		Piece p = board.removePiece(source);
+		Piece capturedPiece = board.removePiece(target);
+		board.placePiece(p, target);
+		return capturedPiece;
+	}
+	
 }
