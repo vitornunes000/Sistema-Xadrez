@@ -75,8 +75,8 @@ public class Board {
 			return null;
 		}
 		Piece piece = piece(position);
-		pieces[position.getRow()][position.getColumn()] = null;
 		piece.position = null;
+		pieces[position.getRow()][position.getColumn()] = null;
 		return piece;
 	}
 }

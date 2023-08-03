@@ -1,5 +1,6 @@
 package application;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import chessEntities.ChessPiece;
@@ -11,10 +12,15 @@ public class Ui {
 	// https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
 	
 	public static ChessPosition readChessPosition(Scanner sc) {
-		String s = sc.nextLine();
-		char column = s.charAt(0);
-		int row = Integer.parseInt(s.substring(1));
-		return new ChessPosition(column, row);
+		try {
+			String s = sc.nextLine();
+			char column = s.charAt(0);
+			int row = Integer.parseInt(s.substring(1));
+			return new ChessPosition(column, row);
+		}
+		catch (InputMismatchException e) {
+			throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
+		}
 	}
 	
 	
@@ -37,6 +43,9 @@ public class Ui {
 	public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
 	public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
+	public static void clearScreen() {  
+		System.out.print("\033[H\033[2J"); System.out.flush();  
+		}
 	public static void printBoard(ChessPiece[][] pieces) {
 		// metodo que cria um tabuleiro de xadrex 
 		for(int i = 0; i<pieces.length; i++) {

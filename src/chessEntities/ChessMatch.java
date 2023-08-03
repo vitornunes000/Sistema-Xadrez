@@ -52,19 +52,23 @@ public class ChessMatch {
         placeNewPiece('d', 8, new King(board, Color.BLACK));
 	}
 	//movimenta a peça e efetua uma captura
-	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition){
 		Position source = sourcePosition.toPosition();
-		Position target = targetPosition.toPosition();
 		validateSourcePosition(source);
+		Position target = targetPosition.toPosition();
 		Piece capturedPiece = makeMove(source, target);
 		return (ChessPiece) capturedPiece;
 		
 	}
 	// validar se a posição de origem informada é valida
 	private void validateSourcePosition(Position source) {
-		if(!board.thereIsAPiece(source)) {
-			throw new BoardException("There is no piece on source position!!");
-		}
+	    if (!board.thereIsAPiece(source)) {
+	        throw new ChessException("There is no piece on source position!!");
+	    }
+	    //validar se existem movimentos que a peça possa realizar
+	    if (!board.piece(source).isThereAnyPossibleMove()) {
+	    	throw new ChessException("there is not possible moves for the chosen piece!!");
+	    }
 	}
 	//remover a peça da origem e uma possivel peça do destino
 	private Piece makeMove(Position source, Position target) {

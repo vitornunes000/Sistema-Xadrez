@@ -3,7 +3,7 @@ package chessEntities;
 import boardgame.Board;
 import boardgame.Piece;
 
-public class ChessPiece extends Piece {
+public abstract class ChessPiece extends Piece {
 	protected Color color;
 	protected int moveCount;
 	
@@ -19,6 +19,7 @@ public class ChessPiece extends Piece {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+
 	
 	
 	
