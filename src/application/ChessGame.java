@@ -23,11 +23,16 @@ public class ChessGame {
 			System.out.println();
 			System.out.println("digite uma posição da peça que deseja mover");
 			System.out.println();
-			ChessPosition source = Ui.readChessPosition(sc);
-			System.out.println();
+			ChessPosition sourcePosition = Ui.readChessPosition(sc);
+			
+			boolean[][] possibleMoves = chessmatch.possibleMoves(sourcePosition);
+			Ui.clearScreen();
+			
+			Ui.printBoard(chessmatch.getPiece(), possibleMoves);
 			System.out.println("digite a posição de destino da peça!!");
 			ChessPosition target = Ui.readChessPosition(sc);
-			ChessPiece chesspiece = chessmatch.performChessMove(source, target);
+			ChessPiece chesspiece = chessmatch.performChessMove(sourcePosition, target);
+			Ui.printBoard(chessmatch.getPiece());
 		}
 		catch(ChessException e) {
 			System.out.println( e.getMessage());
