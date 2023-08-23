@@ -1,8 +1,12 @@
 package application;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+import chessEntities.ChessMatch;
 import chessEntities.ChessPiece;
 import chessEntities.ChessPosition;
 import chessEntities.Color;
@@ -59,6 +63,13 @@ public class Ui {
 		
 		
 	}
+	public static void printMatch(ChessMatch chessmatch, List<ChessPiece> capturedPieces) {
+		printBoard(chessmatch.getPiece());
+		System.out.println();
+		printCapturedPieces(capturedPieces);
+		System.out.println("turn " + chessmatch.getTurn());
+		System.out.println("waiting for the current player " + chessmatch.currentPlayer());
+	}
 	//metodo sobrecarregado printboard que imprime os possiveis mov de cada peça
 
 	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
@@ -91,6 +102,22 @@ public class Ui {
         }
         System.out.print(" ");
 	}
+	private static void printCapturedPieces(List<ChessPiece> capturedPieces) {
+		List<ChessPiece> white = (List<ChessPiece>) capturedPieces.stream().filter(x -> x.getColor() == Color.WHITE).collect(Collectors.toList());
+		List<ChessPiece> black = (List<ChessPiece>) capturedPieces.stream().filter(x -> x.getColor() == Color.BLACK).collect(Collectors.toList());
+		
+		System.out.println("captured white pieces: ");
+		System.out.println("White");
+		System.out.print(ANSI_WHITE);
+		System.out.println(Arrays.toString(white.toArray()));
+		System.out.print(ANSI_RESET);
+		System.out.println("captured black pieces: ");
+		System.out.println("Black");
+		System.out.print(ANSI_YELLOW);
+		System.out.println(Arrays.toString(black.toArray()));
+		System.out.print(ANSI_RESET);
+	} 
+	
 
 
 }

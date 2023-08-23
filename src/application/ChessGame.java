@@ -1,6 +1,8 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import boardgame.BoardException;
@@ -15,13 +17,14 @@ public class ChessGame {
 		// Sistema jogo de xadrez
 		ChessMatch chessmatch = new ChessMatch();
 		Scanner sc = new Scanner(System.in);
+		List<ChessPiece> capturedPieces = new ArrayList<>();
 
 		while(true) {
 		try {
 			Ui.clearScreen();
-			Ui.printBoard(chessmatch.getPiece());
+			Ui.printMatch(chessmatch, capturedPieces);
 			System.out.println();
-			System.out.println("digite uma posição da peça que deseja mover");
+			System.out.println("digite uma posição da peça que deseja mover:");
 			System.out.println();
 			ChessPosition sourcePosition = Ui.readChessPosition(sc);
 			
@@ -32,6 +35,9 @@ public class ChessGame {
 			System.out.println("digite a posição de destino da peça!!");
 			ChessPosition target = Ui.readChessPosition(sc);
 			ChessPiece chesspiece = chessmatch.performChessMove(sourcePosition, target);
+			if(chesspiece != null) {
+				capturedPieces.add(chesspiece);
+			}
 			Ui.printBoard(chessmatch.getPiece());
 		}
 		catch(ChessException e) {
