@@ -63,12 +63,16 @@ public class Ui {
 		
 		
 	}
+	//chama o printboard e adciona o turn na tela alem das peças capturadas
 	public static void printMatch(ChessMatch chessmatch, List<ChessPiece> capturedPieces) {
 		printBoard(chessmatch.getPiece());
 		System.out.println();
 		printCapturedPieces(capturedPieces);
 		System.out.println("turn " + chessmatch.getTurn());
 		System.out.println("waiting for the current player " + chessmatch.currentPlayer());
+		if(chessmatch.getCheck()) {
+			System.out.println("CHECK!! " + chessmatch.currentPlayer());
+		}
 	}
 	//metodo sobrecarregado printboard que imprime os possiveis mov de cada peça
 

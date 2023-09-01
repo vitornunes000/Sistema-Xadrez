@@ -2,6 +2,7 @@ package chessEntities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.BoardException;
@@ -54,6 +55,33 @@ public class ChessMatch {
 		board.placePiece(chessPiece, new ChessPosition(column, row).toPosition());
 		piecesOntheBoard.add(chessPiece);
 	}
+	private Color opponent(Color color) {
+		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+	
+	
+	private ChessPiece king(Color color) {
+		List<Piece> list= piecesOntheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+		for(Piece p: list) {
+			if(p instanceof King) {
+				return (ChessPiece)p;
+			}
+		}
+		throw new IllegalStateException("There is no" + color + "king on the board");
+	}
+	private boolean testCheck(Color color) {
+		Position kingPosition = king(color).getChessPosition().toPosition();
+		List<Piece> opponentPieces= piecesOntheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
+		for(Piece p: opponentPieces) {
+			if(p.possibleMove(kingPosition) ) {
+				return true;
+			}
+	}
+		return false;
+	}
+	public boolean getCheck() {
+		return check;
+	}
 	
 	private void nextTurn() {
 		turn++;
@@ -87,6 +115,14 @@ public class ChessMatch {
 		Position target = targetPosition.toPosition();
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		//logica que verifica se o seu proprio rei esta em check
+		if(testCheck(currentPlayer) == true) {
+			undoMove(source, target, capturedPiece);
+			throw new ChessException("player can´t put your own king in check!!");
+		}
+		//operador ternario que verifica se o oponente esta em check e então muda a variavel 
+		//da partida
+		check = (testCheck(opponent(currentPlayer)) ? true : false);
 		nextTurn();
 		return (ChessPiece) capturedPiece;
 		
@@ -122,6 +158,17 @@ public class ChessMatch {
 			}
 		board.placePiece(p, target);
 		return capturedPiece;
+	}
+	
+	private void undoMove(Position source, Position target, Piece capturedPiece ) {
+		Piece p = board.removePiece(target);
+		board.placePiece(p, source);
+		
+		if(capturedPiece != null) {
+			piecesOntheBoard.add((ChessPiece)capturedPiece);
+			capturedPieces.remove(capturedPiece);
+			board.placePiece(capturedPiece, target);
+		}
 	}
 	
 	public boolean[][] possibleMoves(ChessPosition sourcePosition) {
