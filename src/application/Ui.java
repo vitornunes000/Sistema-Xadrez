@@ -69,9 +69,15 @@ public class Ui {
 		System.out.println();
 		printCapturedPieces(capturedPieces);
 		System.out.println("turn " + chessmatch.getTurn());
-		System.out.println("waiting for the current player " + chessmatch.currentPlayer());
-		if(chessmatch.getCheck()) {
-			System.out.println("CHECK!! " + chessmatch.currentPlayer());
+		if(!chessmatch.getCheckMate()) {
+			System.out.println("waiting for the current player " + chessmatch.currentPlayer());
+			if(chessmatch.getCheck()) {
+				System.out.println("CHECK!! " + chessmatch.currentPlayer());
+			}
+			}
+		else {
+			System.out.println("CHECK MATE");
+			System.out.println("WINNER " + chessmatch.currentPlayer());
 		}
 	}
 	//metodo sobrecarregado printboard que imprime os possiveis mov de cada peça

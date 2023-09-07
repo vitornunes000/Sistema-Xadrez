@@ -59,7 +59,8 @@ public class ChessMatch {
 		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 	
-	
+	//metodo auxiliar que retorna o rei pela cor
+	//esse metodo é utilizado pelo testCheck 
 	private ChessPiece king(Color color) {
 		List<Piece> list= piecesOntheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
 		for(Piece p: list) {
@@ -79,10 +80,44 @@ public class ChessMatch {
 	}
 		return false;
 	}
+	
+	// metodo auxiliar que verifica se o rei esta em checkmate
+	private boolean testCheckMate(Color color) {
+		if(!testCheck(color)) {
+			return false;
+		}
+		//recebe a lista de peças do mesmo time e verifica se o mov de alguma pode desfazer o check
+		List<Piece> list = piecesOntheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+		// para cada peça p na lista vamos receber a lista de possiveis movimentos
+		for(Piece p: list) {
+			boolean[][] matMoves = p.possibleMoves();
+			//verifica cada posição de possivel mov e faz uma jogada
+			for(int i = 0; i<board.getRows(); i++) {
+				for(int j = 0; j<board.getColumns(); j++) {
+					if(matMoves[i][j]) {
+						Position source = ((ChessPiece)p).getChessPosition().toPosition();
+						Position target = new Position(i, j);
+						Piece capturedPiece = makeMove(source, target);
+						boolean testcheck = testCheck(color) ;
+						//se o rei não estiver em check retorna falso
+						// mas se estiver, o loop termina e o metodo retorna true
+						undoMove(source, target, capturedPiece);
+						if(!testCheck(color)) {
+							return false;
+						}
+					}
+				}
+			}
+		} 	return true;
+	}
+	
 	public boolean getCheck() {
 		return check;
 	}
-	
+	public boolean getCheckMate() {
+		return checkMate;
+	}
+	// metodo auxiliar que passa a vez do jogador
 	private void nextTurn() {
 		turn++;
 		//operador ternario que troca o valor da variavel
@@ -116,14 +151,21 @@ public class ChessMatch {
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
 		//logica que verifica se o seu proprio rei esta em check
-		if(testCheck(currentPlayer) == true) {
+		if(testCheck(currentPlayer)) {
 			undoMove(source, target, capturedPiece);
 			throw new ChessException("player can´t put your own king in check!!");
 		}
 		//operador ternario que verifica se o oponente esta em check e então muda a variavel 
 		//da partida
 		check = (testCheck(opponent(currentPlayer)) ? true : false);
-		nextTurn();
+		//testa se o movimento da peça causou checkmate
+		if(testCheckMate(opponent(currentPlayer))) {
+			checkMate = true;
+		}
+		else {
+			nextTurn();
+		}
+		
 		return (ChessPiece) capturedPiece;
 		
 	}
@@ -149,7 +191,7 @@ public class ChessMatch {
 	}
 	//remover a peça da origem e uma possivel peça do destino
 	private Piece makeMove(Position source, Position target) {
-		Piece p = board.removePiece(source);
+		ChessPiece p = (ChessPiece)board.removePiece(source);
 		Piece capturedPiece = board.removePiece(target);
 		
 		if(capturedPiece != null) {
@@ -157,11 +199,12 @@ public class ChessMatch {
 			capturedPieces.add((ChessPiece)capturedPiece);
 			}
 		board.placePiece(p, target);
+		p.increaseMoveCount();
 		return capturedPiece;
 	}
 	
 	private void undoMove(Position source, Position target, Piece capturedPiece ) {
-		Piece p = board.removePiece(target);
+		ChessPiece p = (ChessPiece)board.removePiece(target);
 		board.placePiece(p, source);
 		
 		if(capturedPiece != null) {
@@ -169,6 +212,7 @@ public class ChessMatch {
 			capturedPieces.remove(capturedPiece);
 			board.placePiece(capturedPiece, target);
 		}
+		p.increaseMoveCount();
 	}
 	
 	public boolean[][] possibleMoves(ChessPosition sourcePosition) {

@@ -19,7 +19,7 @@ public class ChessGame {
 		Scanner sc = new Scanner(System.in);
 		List<ChessPiece> capturedPieces = new ArrayList<>();
 
-		while(true) {
+		while(!chessmatch.getCheckMate()) {
 		try {
 			Ui.clearScreen();
 			Ui.printMatch(chessmatch, capturedPieces);
@@ -35,6 +35,7 @@ public class ChessGame {
 			System.out.println("digite a posição de destino da peça!!");
 			ChessPosition target = Ui.readChessPosition(sc);
 			ChessPiece chesspiece = chessmatch.performChessMove(sourcePosition, target);
+			System.out.println("fodase");
 			if(chesspiece != null) {
 				capturedPieces.add(chesspiece);
 			}
@@ -53,6 +54,8 @@ public class ChessGame {
 			sc.nextLine();
 		}
  		}
+		Ui.clearScreen();
+		Ui.printMatch(chessmatch, capturedPieces);
 		
 	}
 
