@@ -224,6 +224,25 @@ public class ChessMatch {
 			piecesOntheBoard.remove(capturedPiece);
 			capturedPieces.add((ChessPiece)capturedPiece);
 			}
+		
+		//Movimento especial do roque do rei 
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() + 2) {
+			Position sourceRook = new Position(source.getRow(), source.getColumn() + 3);
+			Position targetRook = new Position(source.getRow(), source.getColumn() + 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(sourceRook);
+			board.placePiece(rook, targetRook);
+			rook.increaseMoveCount();
+		}
+		//Movimento especial Roque maior do rei
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() -2) {
+			Position sourceRook = new Position(source.getRow(), source.getColumn() - 4);
+			Position targetRook = new Position(source.getRow(), source.getColumn() - 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(sourceRook);
+			board.placePiece(rook, targetRook);
+			rook.increaseMoveCount();
+		}
 		board.placePiece(p, target);
 		p.increaseMoveCount();
 		return capturedPiece;
@@ -231,14 +250,36 @@ public class ChessMatch {
 	
 	private void undoMove(Position source, Position target, Piece capturedPiece ) {
 		ChessPiece p = (ChessPiece)board.removePiece(target);
+		p.decreaseMoveCount();
 		board.placePiece(p, source);
 		
 		if(capturedPiece != null) {
-			piecesOntheBoard.add((ChessPiece)capturedPiece);
-			capturedPieces.remove(capturedPiece);
 			board.placePiece(capturedPiece, target);
+			capturedPieces.remove(capturedPiece);
+			piecesOntheBoard.add((ChessPiece)capturedPiece);
 		}
-		p.increaseMoveCount();
+		
+		
+		//Desfazer Movimento especial do roque menor do rei 
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() + 2) {
+			Position sourceRook = new Position(source.getRow(), source.getColumn() + 3);
+			Position targetRook = new Position(source.getRow(), source.getColumn() + 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(targetRook);
+			board.placePiece(rook, sourceRook);
+			rook.decreaseMoveCount();
+		}
+		//Movimento especial Roque maior do rei
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() -2) {
+			Position sourceRook = new Position(source.getRow(), source.getColumn() - 4);
+			Position targetRook = new Position(source.getRow(), source.getColumn() - 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(targetRook);
+			board.placePiece(rook, sourceRook);
+			rook.decreaseMoveCount();
+		}
+	
+	
 	}
 	
 	public boolean[][] possibleMoves(ChessPosition sourcePosition) {

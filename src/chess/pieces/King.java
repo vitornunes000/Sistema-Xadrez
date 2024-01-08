@@ -8,7 +8,7 @@ import chessEntities.ChessPiece;
 import chessEntities.Color;
 
 public class King extends ChessPiece{
-	private ChessMatch chessmatch = new ChessMatch();
+	private ChessMatch chessmatch;
 	
 	public King(Board  board, Color color, ChessMatch chessmatch) {
 		super(board, color);
@@ -100,7 +100,7 @@ public class King extends ChessPiece{
 			//movimento roque da esquerda
 			Position post2 = new Position(position.getRow(), position.getColumn() - 4);
 			if(testRookCastling(post2)) {
-				Position p1 = new Position(position.getRow(), position.getColumn()  -1);
+				Position p1 = new Position(position.getRow(), position.getColumn() - 1);
 				Position p2 = new Position(position.getRow(), position.getColumn() - 2);
 				Position p3 = new Position(position.getRow(), position.getColumn() - 3);
 				if(getBoard().piece(p1) == null && getBoard().piece(p2) == null 
