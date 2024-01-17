@@ -39,6 +39,17 @@ public class ChessGame {
 			if(chesspiece != null) {
 				capturedPieces.add(chesspiece);
 			}
+			//testa se alguma peça foi promovida e então o usuario pode escolher
+			if(chessmatch.getPromotedPiece() != null) {
+				System.out.println("Digite a letra de peça que deseja promover\n[B] bispo\n[N]cavaleiro\n[R]torre\n[Q]rainha");
+				String type = sc.nextLine().toUpperCase();
+				while(!type.equals("Q") && !type.equals("R") && !type.equals("K") && !type.equals("N")) {
+					System.out.println(" invalid string!! Digite a letra de peça que deseja promover\n[B] bispo\n[N]cavaleiro\n[R]torre\n[Q]rainha");
+					type = sc.nextLine();
+				}
+				chessmatch.replacePromotedPiece(type);
+				
+			}
 			Ui.printBoard(chessmatch.getPiece());
 		}
 		catch(ChessException e) {

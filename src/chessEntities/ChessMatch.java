@@ -1,5 +1,6 @@
 package chessEntities;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,6 +126,9 @@ public class ChessMatch {
 	public ChessPiece getEnpassantVulnerable() {
 		return enPassantVulnerable;
 	}
+	public ChessPiece getPromotedPiece() {
+		return promoted;
+	}
 	// metodo auxiliar que passa a vez do jogador
 	private void nextTurn() {
 		turn++;
@@ -188,6 +192,15 @@ public class ChessMatch {
 		//variavel para testar o enpassant
 		ChessPiece movedPiece = (ChessPiece)board.piece(target);
 		
+		//movimento especial promoção
+		promoted = null;
+		if(movedPiece instanceof Pawn) {
+			if(movedPiece.getColor() == Color.WHITE && target.getRow() == 0 || movedPiece.getColor() == Color.BLACK && target.getRow() == 7) {
+				promoted = (ChessPiece)board.piece(target);
+				promoted = replacePromotedPiece("Q");
+			}
+		}
+		
 		//operador ternario que verifica se o oponente esta em check e então muda a variavel 
 		//da partida
 		check = (testCheck(opponent(currentPlayer)) ? true : false);
@@ -206,6 +219,7 @@ public class ChessMatch {
 		}else {
 			enPassantVulnerable = null;
 		}
+		
 		
 		return (ChessPiece) capturedPiece;
 		
@@ -277,6 +291,42 @@ public class ChessMatch {
 		board.placePiece(p, target);
 		p.increaseMoveCount();
 		return capturedPiece;
+	}
+	
+	//metodo auxiliar no movimento de promoção
+	public ChessPiece replacePromotedPiece(String type) {
+		if(promoted == null) {
+			throw new IllegalStateException("there is no piece to be promoted");
+		}
+		if(!type.equals("Q") && !type.equals("R") && !type.equals("K") && !type.equals("N")) {
+			return promoted;
+		}
+		
+		Position promo = promoted.getChessPosition().toPosition();
+		Piece p = board.removePiece(promo);
+		piecesOntheBoard.remove(p);
+		
+		ChessPiece newpiece = newPiece(type, promoted.getColor());
+		board.placePiece(newpiece, promo);
+		piecesOntheBoard.add(newpiece);
+		
+		return newpiece;
+	}
+	
+	//metodo cria uma peça a partir de uma string auxilia o replacepromotedpiece
+	private ChessPiece newPiece(String type, Color color) {
+		if(type.equals('B')) {
+			return new Bishop(board, color);
+		}
+		if(type.equals('N')) {
+			return new Knight(board, color);
+		}
+		if(type.equals('R')) {
+			return new Rook(board, color);
+		}
+		//se falha as condições anteriores, a rainha é que retorna
+		return new Queen(board, color);
+		
 	}
 	
 	private void undoMove(Position source, Position target, Piece capturedPiece ) {
